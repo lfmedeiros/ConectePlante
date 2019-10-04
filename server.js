@@ -1,79 +1,56 @@
 const {GraphQLServer} = require('graphql-yoga');
-const data = require('./data'); // Instanciar o arquivo data
-
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/conecteplante', {useNewUrlParser: true});
-
+mongoose.connect('mongodb://localhost:27017/conecteplante',{useNewUrlParser: true});
 
 const Product = mongoose.model('Product', {
-    name:String,
-    price: Number,
+    name: String,
+    price: String,
     description: String,
-    category: String    
-
-
- 
-
-
+    category: String
 });
 
-
-const tomato = new Product({
-    name: "Tomate",
-    price: "2",
-    description: "Tomate cereja",
-    category: "Fruta"
-});
-
+const tomato = new Product({name: "Tomate", price: "2", description: "Tomate cereja", category: "Fruta"});
 tomato
     .save()
     .then(() => console.log('Ack'));
 
+const typeDefs = `type Query {
+     getProduct(id: ID!): Product
+     getProducts: [Product]
+ }
+ type Product {
+     id: ID!
+     name: String!
+     price: String!
+     description: String!
+     category: String!
+ }
 
+ type Mutation {
+     addProduct(name: String!, price: String!, description: String!, category: String!): Product!,
+     deleteProduct(id:ID!): String 
+  
+ }`
 
-
-
-const typeDefs = `
-type Channel {
-    idChannel: Int,
-    name: String,
-    playlists: [Playlist]
-}
-
-type Playlist {
-    idPlaylist: Int,
-    name: String,
-    videos: [Video]
-}
-
-type Video {
-    idVideo: Int,
-    title: String,
-    views: Int
-}
-
-type Query{
-    channels(idChannel: Int):[Channel]
-}
-`;
 const resolvers = {
     Query: {
-        channels(obj, args) {
-            return data.getData('channels', 'idChannel', args.idChannel);
-
+        getProducts: () => Product.find(),
+        getProduct: async (_, {id}) => {
+            var result = await Product.findById(id);
+            return result;
         }
-    },
-    Channel: {
-        playlists: function (obj, args) {
-            return data.getData('playlists', 'idChannel', obj.idChannel);
 
-        }
     },
-
-    Playlist: {
-        videos: function (obj, args) {
-            return data.getData('videos', 'idPlaylist', obj.idPlaylist);
+    Mutation: {
+        addProduct: async (_, {name, price, description, category}) => {
+            const product = new Product({name, price, description, category});
+            await product.save();
+            return product;
+        },
+        deleteProduct: async(_,{id}) => {
+            await Product.findByIdAndRemove(id);
+            return "Product Deleted";
         }
     }
 };
