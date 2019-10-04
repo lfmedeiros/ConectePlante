@@ -21,7 +21,13 @@ const data = {
             name: "Node.js"
         }
     ],
-    videos: []
+    videos: [
+        {
+        idVideo:1,
+        idPlaylist:1,
+        title: "Introdução ao AngularJS"
+        }
+    ]
 };
 
 exports.getData = function (collection, field, value) {
