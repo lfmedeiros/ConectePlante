@@ -1,5 +1,5 @@
 {
-  "name": "graphqlEx",
+  "name": "graphql",
   "version": "1.0.0",
   "description": "GraphQL example - Rodrigo",
   "main": "server.js",
