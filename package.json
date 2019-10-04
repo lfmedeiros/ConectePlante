@@ -1,0 +1,16 @@
+{
+  "name": "graphqlEx",
+  "version": "1.0.0",
+  "description": "GraphQL example - Rodrigo",
+  "main": "server.js",
+  "dependencies": {
+    "nodemon": "^1.19.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "@lucasmedeiros",
+  "license": "ISC"
+}
