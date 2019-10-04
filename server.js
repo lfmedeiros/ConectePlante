@@ -16,7 +16,8 @@ type Playlist {
 
 type Video {
     idVideo: Int,
-    title: String
+    title: String,
+    views: Int
 }
 
 type Query{
