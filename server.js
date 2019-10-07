@@ -1,8 +1,15 @@
 const {GraphQLServer} = require('graphql-yoga');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/conecteplante',{useNewUrlParser: true});
+//**************************** Database definitions ****************************
 
+// Database connection
+mongoose.connect('mongodb://localhost:27017/conecteplante', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+
+//Collections
 const Product = mongoose.model('Product', {
     name: String,
     price: String,
@@ -10,11 +17,23 @@ const Product = mongoose.model('Product', {
     category: String
 });
 
-// const tomato = new Product({name: "Tomate", price: "2", description: "Tomate cereja", category: "Fruta"});
-// tomato
-//     .save()
-//     .then(() => console.log('Ack'));
+//Documents
+const batata = new Product(
+    {name: "Batata", price: "4", description: "Batata", category: "Legume"}
+);
+batata
+    .save()
+    .then(() => console.log(
+        'Product added|ID:' + batata.id + '|Description:' + batata.description
+    ));
 
+//***************************************************************************
+
+
+
+
+
+//**************************** Type Defs ************************************
 const typeDefs = `type Query {
      getProduct(id: ID!): Product
      getProducts: [Product]
@@ -33,6 +52,7 @@ const typeDefs = `type Query {
   
  }`
 
+//**************************** Resolvers ***********************************
 const resolvers = {
     Query: {
         getProducts: () => Product.find(),
@@ -41,15 +61,17 @@ const resolvers = {
             return result;
         }
 
+
+ //**************************** Mutations **********************************
     },
     Mutation: {
         addProduct: async (_, {name, price, description, category}) => {
             const product = new Product({name, price, description, category});
             await product.save();
             return product, "Product Added";
-            
+
         },
-        deleteProduct: async(_,{id}) => {
+        deleteProduct: async (_, {id}) => {
             await Product.findByIdAndRemove(id);
             return "Product Deleted";
         }
@@ -58,6 +80,3 @@ const resolvers = {
 
 const server = new GraphQLServer({typeDefs, resolvers});
 server.start();
-
-
-

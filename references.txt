@@ -1,5 +1,5 @@
 
 Artigo medium sobre graphql: https://medium.com/trainingcenter/graphql-aprendendo-na-pr%C3%A1tica-569a6866065b
-
 graphql mutations: https://graphql.org/graphql-js/mutations-and-input-types/
-Acessar o playground: execute server.js e acesse: http://localhost:4000/
+PLayground access: execute server.js e acesse: http://localhost:4000/
+Mongodb: https://medium.com/@thaisdalencar/mongodb-como-relacionar-dados-3e6e8f136590 
