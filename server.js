@@ -9,17 +9,30 @@ mongoose.connect('mongodb://localhost:27017/conecteplante', {
     useUnifiedTopology: true
 });
 
+var dateTime = new Date(); 
+
 //Collections
 const Product = mongoose.model('Product', {
     name: String,
     price: String,
     description: String,
-    category: String
+    category: String,
+    activeProduct: Boolean,
+    createdAt: Date,
+    updatedAt: Date
 });
+
+const Test = mongoose.model('Test',{
+    name: String,
+    price: String,
+    tag: String,
+    timeStamp: Date
+
+})
 
 //Documents
 const batata = new Product(
-    {name: "Batata", price: "4", description: "Batata", category: "Legume"}
+    {name: "Batata", price: "4", description: "Batata", category: "Legume", timeStamp: dateTime, activeProduct: true}
 );
 batata
     .save()
@@ -27,10 +40,20 @@ batata
         'Product added|ID:' + batata.id + '|Description:' + batata.description
     ));
 
-//***************************************************************************
 
 
+const test = new Test({
+    name: "String",
+    price: "500",
+    tag: "True",
+    timeStamp: dateTime
+});
+test
+    .save()
+    .then(() => console.log ("Sucesso" +' ' +  dateTime));
 
+
+    
 
 
 //**************************** Type Defs ************************************
@@ -44,10 +67,12 @@ const typeDefs = `type Query {
      price: String!
      description: String!
      category: String!
+     createdAt: String!
+     updatedAt: String!
  }
 
  type Mutation {
-     addProduct(name: String!, price: String!, description: String!, category: String!): Product!,
+     addProduct(name: String!, price: String!, description: String!, category: String!, createdAt: String!, updatedAt: String!): Product!,
      deleteProduct(id:ID!): String 
   
  }`
