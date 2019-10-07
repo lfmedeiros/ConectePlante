@@ -1,4 +1,4 @@
-const {GraphQLServer} = require('graphql-yoga');
+const { GraphQLServer } = require('graphql-yoga');
 const mongoose = require('mongoose');
 
 //**************************** Database definitions ****************************
@@ -9,7 +9,7 @@ mongoose.connect('mongodb://localhost:27017/conecteplante', {
     useUnifiedTopology: true
 });
 
-var dateTime = new Date(); 
+var dateTime = new Date();
 
 //Collections
 const Product = mongoose.model('Product', {
@@ -22,16 +22,16 @@ const Product = mongoose.model('Product', {
     updatedAt: Date
 });
 
-
+//Schema
 var userSchema = new mongoose.Schema({
     name: String,
-    cpf: {type: Number},
-    telfone: {type: Number},
+    cpf: { type: Number },
+    telfone: { type: Number },
     createdAt: Date,
-    updated: {type: Date},
-    email: String,    
-    age: {type:Number, min: 18, max: 90},    
-    admin: {type: Boolean}
+    updated: { type: Date },
+    email: String,
+    age: { type: Number, min: 18, max: 90 },
+    admin: { type: Boolean }
 });
 
 var User = mongoose.model('User', userSchema);
@@ -40,7 +40,7 @@ var Lucas = new User({
     name: "Lucas Medeiros",
     cpf: 09377768900,
     telfone: 988229779,
-    createdAt:dateTime,
+    createdAt: dateTime,
     updated: new Date(),
     email: "lucamede@gmail.com",
     age: 19,
@@ -50,28 +50,15 @@ Lucas
     .save()
     .then(() => console.log('User Added'));
 
-
-    
-
-
-
-
-
-
-
-
 //Documents
 const batata = new Product(
-    {name: "Batata", price: "4", description: "Batata", category: "Legume", timeStamp: dateTime, activeProduct: true}
+    { name: "Batata", price: "4", description: "Batata", category: "Legume", timeStamp: dateTime, activeProduct: true }
 );
 batata
     .save()
     .then(() => console.log(
         'Product added|ID:' + batata.id + '|Description:' + batata.description
     ));
-
-    
-
 
 //**************************** Type Defs ************************************
 const typeDefs = `type Query {
@@ -98,27 +85,26 @@ const typeDefs = `type Query {
 const resolvers = {
     Query: {
         getProducts: () => Product.find(),
-        getProduct: async (_, {id}) => {
+        getProduct: async (_, { id }) => {
             var result = await Product.findById(id);
             return result;
         }
 
-
- //**************************** Mutations **********************************
+        //**************************** Mutations **********************************
     },
     Mutation: {
-        addProduct: async (_, {name, price, description, category}) => {
-            const product = new Product({name, price, description, category});
+        addProduct: async (_, { name, price, description, category }) => {
+            const product = new Product({ name, price, description, category });
             await product.save();
             return product, "Product Added";
 
         },
-        deleteProduct: async (_, {id}) => {
+        deleteProduct: async (_, { id }) => {
             await Product.findByIdAndRemove(id);
             return "Product Deleted";
         }
     }
 };
 
-const server = new GraphQLServer({typeDefs, resolvers});
+const server = new GraphQLServer({ typeDefs, resolvers });
 server.start();
