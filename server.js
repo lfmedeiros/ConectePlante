@@ -3,6 +3,15 @@ const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
 
+
+
+function main() {
+    const port = process.env.PORT || 3000;
+    app.listen(port,() => console.log(`Server is listening on port: ${port}`));
+}
+main();
+
+
 //**************************** Database definitions ****************************
 
 // Database connection
@@ -111,10 +120,6 @@ const resolvers = {
 const server = new GraphQLServer({ typeDefs, resolvers });
 server.start();
 
-
-app.listen(3000, function(){
-    console.log('server running on port3000')
-});
 
 app.get('/',(req, res) => {
     res.send(Lucas.name +  Lucas.id)
