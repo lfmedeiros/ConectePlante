@@ -1,16 +1,15 @@
 const { GraphQLServer } = require('graphql-yoga');
 const mongoose = require('mongoose');
 const express = require('express');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const app = express();
-
-
 
 function main() {
     const port = process.env.PORT || 3000;
-    app.listen(port,() => console.log(`Server is listening on port: ${port}`));
+    app.listen(port, () => console.log(`Server is listening on port: ${port}`));
 }
 main();
-
 
 //**************************** Database definitions ****************************
 
@@ -33,49 +32,19 @@ const Product = mongoose.model('Product', {
     updatedAt: Date
 });
 
-//Schema
-var userSchema = new mongoose.Schema({
-    name: String,
-    cpf: { type: Number },
-    telfone: { type: Number },
-    createdAt: Date,
-    updated: { type: Date },
+const User = mongoose.model('User', {
+    username: String,
     email: String,
-    age: { type: Number, min: 18, max: 90 },
-    admin: { type: Boolean }
+    password: String
 });
-
-var User = mongoose.model('User', userSchema);
-
-var Lucas = new User({
-    name: "Lucas Medeiros",
-    cpf: 09377768900,
-    telfone: 988229779,
-    createdAt: dateTime,
-    updated: new Date(),
-    email: "lucamede@gmail.com",
-    age: 19,
-    admin: true
-});
-Lucas
-    .save()
-    .then(() => console.log('User Added'));
-
-//Documents
-const batata = new Product(
-    { name: "Batata", price: "4", description: "Batata", category: "Legume", timeStamp: dateTime, activeProduct: true }
-);
-batata
-    .save()
-    .then(() => console.log(
-        'Product added|ID:' + batata.id + '|Description:' + batata.description
-    ));
 
 //**************************** Type Defs ************************************
 const typeDefs = `type Query {
      getProduct(id: ID!): Product
      getProducts: [Product]
- }
+     me: User
+}
+
  type Product {
      id: ID!
      name: String!
@@ -84,13 +53,20 @@ const typeDefs = `type Query {
      category: String!
      createdAt: String!
      updatedAt: String!
- }
+}
+ 
+ type User {
+     id: Int!
+     username: String!
+     email: String!
+}
 
  type Mutation {
      addProduct(name: String!, price: String!, description: String!, category: String!, createdAt: String!, updatedAt: String!): Product!,
      deleteProduct(id:ID!): String 
-  
- }`
+     signup(username: String!, email: String!, password: String!): String
+     login(email: String!, password: String!): String
+}`
 
 //**************************** Resolvers ***********************************
 const resolvers = {
@@ -99,20 +75,63 @@ const resolvers = {
         getProduct: async (_, { id }) => {
             var result = await Product.findById(id);
             return result;
+        },
+        async me(_, args, { user }) {
+            if (!user) {
+                throw new Error('You are not authenticated')
+            }
+            return await User.findById(user.id)
         }
-
-        //**************************** Mutations **********************************
     },
+
+    //**************************** Mutations **********************************
+
     Mutation: {
         addProduct: async (_, { name, price, description, category }) => {
             const product = new Product({ name, price, description, category });
             await product.save();
             return product, "Product Added";
-
         },
+
         deleteProduct: async (_, { id }) => {
             await Product.findByIdAndRemove(id);
             return "Product Deleted";
+        },
+
+        async signup(_, { username, email, password }) {
+            const user = await User.create({
+                username,
+                email,
+                password: await bcrypt.hash(password, 10)
+            })
+
+            // return json web token
+            return jsonwebtoken.sign(
+                { id: user.id, email: user.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '1y' }
+            )
+        },
+        // Handles user login
+        async login(_, { email, password }) {
+            const user = await User.findOne({ where: { email } })
+
+            if (!user) {
+                throw new Error('No user with that email')
+            }
+
+            const valid = await bcrypt.compare(password, user.password)
+
+            if (!valid) {
+                throw new Error('Incorrect password')
+            }
+
+            // return json web token
+            return jsonwebtoken.sign(
+                { id: user.id, email: user.email },
+                process.env.JWT_SECRET,
+                { expiresIn: '1d' }
+            )
         }
     }
 };
@@ -121,6 +140,6 @@ const server = new GraphQLServer({ typeDefs, resolvers });
 server.start();
 
 
-app.get('/',(req, res) => {
-    res.send(Lucas.name +  Lucas.id)
+app.get('/', (req, res) => {
+    res.send('JWT TESTE')
 });
