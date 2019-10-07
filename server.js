@@ -1,5 +1,7 @@
 const { GraphQLServer } = require('graphql-yoga');
 const mongoose = require('mongoose');
+const express = require('express');
+const app = express();
 
 //**************************** Database definitions ****************************
 
@@ -108,3 +110,12 @@ const resolvers = {
 
 const server = new GraphQLServer({ typeDefs, resolvers });
 server.start();
+
+
+app.listen(3000, function(){
+    console.log('server running on port3000')
+});
+
+app.get('/',(req, res) => {
+    res.send(Lucas.name +  Lucas.id)
+});
