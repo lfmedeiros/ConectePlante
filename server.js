@@ -22,13 +22,43 @@ const Product = mongoose.model('Product', {
     updatedAt: Date
 });
 
-const Test = mongoose.model('Test',{
-    name: String,
-    price: String,
-    tag: String,
-    timeStamp: Date
 
-})
+var userSchema = new mongoose.Schema({
+    name: String,
+    cpf: {type: Number},
+    telfone: {type: Number},
+    createdAt: Date,
+    updated: {type: Date},
+    email: String,    
+    age: {type:Number, min: 18, max: 90},    
+    admin: {type: Boolean}
+});
+
+var User = mongoose.model('User', userSchema);
+
+var Lucas = new User({
+    name: "Lucas Medeiros",
+    cpf: 09377768900,
+    telfone: 988229779,
+    createdAt:dateTime,
+    updated: new Date(),
+    email: "lucamede@gmail.com",
+    age: 19,
+    admin: true
+});
+Lucas
+    .save()
+    .then(() => console.log('User Added'));
+
+
+    
+
+
+
+
+
+
+
 
 //Documents
 const batata = new Product(
@@ -39,19 +69,6 @@ batata
     .then(() => console.log(
         'Product added|ID:' + batata.id + '|Description:' + batata.description
     ));
-
-
-
-const test = new Test({
-    name: "String",
-    price: "500",
-    tag: "True",
-    timeStamp: dateTime
-});
-test
-    .save()
-    .then(() => console.log ("Sucesso" +' ' +  dateTime));
-
 
     
 

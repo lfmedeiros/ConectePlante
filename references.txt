@@ -3,3 +3,5 @@ Artigo medium sobre graphql: https://medium.com/trainingcenter/graphql-aprendend
 graphql mutations: https://graphql.org/graphql-js/mutations-and-input-types/
 PLayground access: execute server.js e acesse: http://localhost:4000/
 Mongodb: https://medium.com/@thaisdalencar/mongodb-como-relacionar-dados-3e6e8f136590 
+Datatypes of mongodb: https://mongoosejs.com/docs/schematypes.html#numbers
+Mongoose help: http://nodebr.com/nodejs-e-mongodb-introducao-ao-mongoose/
