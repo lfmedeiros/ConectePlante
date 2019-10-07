@@ -10,10 +10,10 @@ const Product = mongoose.model('Product', {
     category: String
 });
 
-const tomato = new Product({name: "Tomate", price: "2", description: "Tomate cereja", category: "Fruta"});
-tomato
-    .save()
-    .then(() => console.log('Ack'));
+// const tomato = new Product({name: "Tomate", price: "2", description: "Tomate cereja", category: "Fruta"});
+// tomato
+//     .save()
+//     .then(() => console.log('Ack'));
 
 const typeDefs = `type Query {
      getProduct(id: ID!): Product
@@ -46,7 +46,8 @@ const resolvers = {
         addProduct: async (_, {name, price, description, category}) => {
             const product = new Product({name, price, description, category});
             await product.save();
-            return product;
+            return product, "Product Added";
+            
         },
         deleteProduct: async(_,{id}) => {
             await Product.findByIdAndRemove(id);
@@ -57,3 +58,6 @@ const resolvers = {
 
 const server = new GraphQLServer({typeDefs, resolvers});
 server.start();
+
+
+
